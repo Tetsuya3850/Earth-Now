@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Client from './client'
 
@@ -14,6 +13,7 @@ class App extends Component {
 
   componentDidMount(){
     this.loadEarthquakes();
+    // Updates earthquake every 5 minutes.
     setInterval(this.loadEarthquakes, 300000);
   }
 
