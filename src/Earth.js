@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./CSS/App.css";
 import THREELib from "three-js";
 import loadingGif from "./Visuals/loading.gif";
 
@@ -157,9 +156,7 @@ class Earth extends Component {
     }
     return (
       <div>
-        <div ref="myRef">
-          {loadingSign}
-        </div>
+        <div ref="myRef">{loadingSign}</div>
         <div id="earthCanvas" />;
       </div>
     );

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link, Switch, Route } from "react-router-dom";
 import "./App.css";
 import Client from "./client";
 import Earth from "./Earth";
@@ -15,8 +16,10 @@ class App extends Component {
           <Link to="/earth">Earth</Link>
         </li>
 
-        <Route path="/today" component={TodayEarthquake} />
-        <Route path="/earth" component={Earth} />
+        <Switch>
+          <Route path="/today" component={TodayEarthquake} />
+          <Route path="/earth" component={Earth} />
+        </Switch>
       </div>
     );
   }
