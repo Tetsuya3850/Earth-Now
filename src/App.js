@@ -1,18 +1,43 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Client from './client'
 
 class App extends Component {
+  constructor(props){
+    super(props)
+
+    this.state = {
+      earthquakes: []
+    }
+  }
+
+  componentDidMount(){
+    this.loadEarthquakes();
+    setInterval(this.loadEarthquakes, 300000);
+  }
+
+  loadEarthquakes = () => {
+    Client.dailySearch((data) => {
+      this.setState({
+            earthquakes: data,
+        });
+      }
+    );
+  }
+
   render() {
+    const RecentEarthquakes = this.state.earthquakes.map((earthquake) => (
+      <div>
+        <div key={earthquake}>{earthquake}</div>
+        <br></br>
+      </div>
+    ));
+
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <h1 style={{marginBottom: 20}}>Today's Earthquakes</h1>
+        {RecentEarthquakes}
       </div>
     );
   }
