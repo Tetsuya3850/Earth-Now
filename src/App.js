@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link, Switch, Route } from "react-router-dom";
 import "./App.css";
-import Client from "./client";
 import Earth from "./Earth";
 import TodayEarthquake from "./TodayEarthquake";
 

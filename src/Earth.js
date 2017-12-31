@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import THREELib from "three-js";
-import loadingGif from "./Visuals/loading.gif";
+import Client from "./client";
+import earth from "./earthmap4k.jpg";
 
 const THREE = THREELib(["OrbitControls"]);
 
@@ -9,8 +10,7 @@ let renderer;
 let scene;
 let camera;
 let cameraControl;
-
-let video, videoSrc, videoImage, videoImageContext, videoTexture;
+let loader, canvas;
 
 class Earth extends Component {
   constructor(props) {
@@ -40,13 +40,18 @@ class Earth extends Component {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.Enabled = true;
 
-    const sphereGeometry = new THREE.SphereGeometry(15, 60, 60);
-    let sphereMaterial = this.createEarthMaterial();
-    let earthMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    // create a cloudGeometry, slighly bigger than the original sphere
+    var earthGeometry = new THREE.SphereGeometry(15, 60, 60);
+    var earthMaterial = this.createEarthMaterial();
+    var earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
     earthMesh.name = "earth";
     scene.add(earthMesh);
-    let point = this.lonLatToVector3(this.props.lon, this.props.lat);
-    earthMesh.rotation.set(point.x, point.y, 0);
+
+    var overlayGeometry = new THREE.SphereGeometry(15, 60, 60);
+    var overlayMaterial = this.createOverlayMaterial();
+    var overlayMesh = new THREE.Mesh(overlayGeometry, overlayMaterial);
+    overlayMesh.name = "overlay";
+    scene.add(overlayMesh);
 
     camera.position.z = 45;
     camera.lookAt(scene.position);
@@ -64,59 +69,52 @@ class Earth extends Component {
   }
 
   createEarthMaterial() {
-    video = document.createElement("video");
-    video.src = this.determineAsset();
-    video.load();
-    video.play();
-    video.loop = this.props.loop;
+    loader = new THREE.TextureLoader();
+    var earthTexture = loader.load(earth);
 
-    videoImage = document.createElement("canvas");
-    videoImage.width = this.props.width;
-    videoImage.height = this.props.height;
-
-    videoImageContext = videoImage.getContext("2d");
-    videoImageContext.fillStyle = "#000000";
-    videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
-
-    videoTexture = new THREE.Texture(videoImage);
-    videoTexture.minFilter = THREE.LinearFilter;
-    videoTexture.magFilter = THREE.LinearFilter;
-
-    let earthMaterial = new THREE.MeshBasicMaterial({
-      map: videoTexture
-    });
+    var earthMaterial = new THREE.MeshBasicMaterial();
+    earthMaterial.map = earthTexture;
+    earthMaterial.transparent = true;
 
     return earthMaterial;
   }
 
-  determineAsset() {
-    switch (this.props.global) {
-      case "earth":
-        videoSrc = require("./Visuals/earth.mp4");
-        break;
-      case "vapor":
-        videoSrc = require("./Visuals/vapor.mp4");
-        break;
-      case "sst":
-        videoSrc = require("./Visuals/sst.mp4");
-        break;
-      case "sstlonlat":
-        videoSrc = require("./Visuals/sstlonlat.mp4");
-        break;
-      case "continentafricaamerica":
-        videoSrc = require("./Visuals/continentafricaamerica.mp4");
-        break;
-      case "gw":
-        videoSrc = require("./Visuals/gw.mp4");
-        break;
-      case "city":
-        videoSrc = require("./Visuals/city.mp4");
-        break;
-      case "forest":
-        videoSrc = require("./Visuals/forest.mp4");
-        break;
-    }
-    return videoSrc;
+  createOverlayMaterial() {
+    var olMaterial = new THREE.MeshBasicMaterial();
+    olMaterial.map = new THREE.Texture(this.addCanvas());
+    olMaterial.transparent = true;
+    olMaterial.opacity = 0.6;
+    return olMaterial;
+  }
+
+  addCanvas() {
+    canvas = document.createElement("canvas");
+    canvas.width = 4096;
+    canvas.height = 2048;
+
+    var context = canvas.getContext("2d");
+
+    Client.dailyLocationSearch(data => {
+      data.forEach(function(e) {
+        var posX = parseFloat(e[0]);
+        var posY = parseFloat(e[1]);
+
+        var x2 = 4096 / 360.0 * (180 + posX);
+        var y2 = 2048 / 180.0 * (90 - posY);
+
+        context.beginPath();
+        context.arc(x2, y2, 8, 0, 2 * Math.PI, false);
+        context.fillStyle = "yellow";
+        context.fill();
+
+        context.fill();
+        context.lineWidth = 2;
+        context.strokeStyle = "yellow";
+        context.stroke();
+      });
+    });
+
+    return canvas;
   }
 
   lonLatToVector3(lng, lat, out) {
@@ -127,11 +125,7 @@ class Earth extends Component {
   }
 
   threeRender = () => {
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      videoImageContext.drawImage(video, 0, 0);
-      if (videoTexture) videoTexture.needsUpdate = true;
-      if (this.refs.myRef) this.setState({ loading: false });
-    }
+    scene.getObjectByName("overlay").material.map.needsUpdate = true;
     cameraControl.update();
     renderer.render(scene, camera);
     requestAnimationFrame(this.threeRender);
@@ -144,20 +138,9 @@ class Earth extends Component {
   }
 
   render() {
-    let loadingSign = (
-      <img
-        src={loadingGif}
-        style={{ marginTop: 200, marginLeft: 200 }}
-        alt="loading"
-      />
-    );
-    if (this.state.loading === false) {
-      loadingSign = null;
-    }
     return (
       <div>
-        <div ref="myRef">{loadingSign}</div>
-        <div id="earthCanvas" />;
+        <div id="earthCanvas" />
       </div>
     );
   }
