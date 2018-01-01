@@ -23,3 +23,7 @@ export function timeConverter(timestamp) {
   var time = month + " " + date + " " + year;
   return time;
 }
+
+export function round_helper(num) {
+  return Math.round(num / 100000000);
+}

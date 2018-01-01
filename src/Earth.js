@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import THREELib from "three-js";
-import Client from "./client";
+import Client from "./api";
 import earth from "./blueMarble.jpg";
 import { timeConverter } from "./helper";
 
