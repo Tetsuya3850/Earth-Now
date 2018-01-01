@@ -116,13 +116,27 @@ class Earth extends Component {
 
     var context = canvas.getContext("2d");
 
-    console.log(this.state.earthquake);
+    if (Object.keys(this.state.earthquake).length !== 0) {
+      this.state.earthquake[this.state.timestamp].forEach(e => {
+        var posX = parseFloat(e[0]);
+        var posY = parseFloat(e[1]);
 
-    this.state.earthquake.map(data => {
-      console.log(data);
-    });
+        var x2 = 4096 / 360.0 * (180 + posX);
+        var y2 = 2048 / 180.0 * (90 - posY);
 
-    Client.dailyLocationSearch(data => {
+        context.beginPath();
+        context.arc(x2, y2, 8, 0, 2 * Math.PI, false);
+        context.fillStyle = "yellow";
+        context.fill();
+
+        context.fill();
+        context.lineWidth = 2;
+        context.strokeStyle = "yellow";
+        context.stroke();
+      });
+    }
+
+    /*Client.dailyLocationSearch(data => {
       data.forEach(function(e) {
         var posX = parseFloat(e[0]);
         var posY = parseFloat(e[1]);
@@ -140,7 +154,7 @@ class Earth extends Component {
         context.strokeStyle = "yellow";
         context.stroke();
       });
-    });
+    });*/
 
     return canvas;
   }
@@ -153,6 +167,9 @@ class Earth extends Component {
   }
 
   threeRender = () => {
+    scene.getObjectByName("overlay").material.map = new THREE.Texture(
+      this.addCanvas()
+    );
     scene.getObjectByName("overlay").material.map.needsUpdate = true;
     cameraControl.update();
     renderer.render(scene, camera);

@@ -29,7 +29,7 @@ async function dailyLocationSearch(cb) {
 async function monthlyTimeLocationSearch(cb) {
   try {
     const response = await fetch(
-      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson`
+      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.geojson`
     );
     const json = await response.json();
     const eObj = {};
