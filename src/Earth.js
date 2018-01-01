@@ -17,7 +17,7 @@ class Earth extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      earthquake: [],
+      earthquake: {},
       startTime: Date.now(),
       endTime: Date.now(),
       timestamp: Date.now()
@@ -63,18 +63,22 @@ class Earth extends Component {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.Enabled = true;
 
+    let point = this.lonLatToVector3(38, 135);
+
     // create a cloudGeometry, slighly bigger than the original sphere
     var earthGeometry = new THREE.SphereGeometry(15, 60, 60);
     var earthMaterial = this.createEarthMaterial();
     var earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
     earthMesh.name = "earth";
     scene.add(earthMesh);
+    earthMesh.rotation.set(point.x, point.y, 0);
 
     var overlayGeometry = new THREE.SphereGeometry(15, 60, 60);
     var overlayMaterial = this.createOverlayMaterial();
     var overlayMesh = new THREE.Mesh(overlayGeometry, overlayMaterial);
     overlayMesh.name = "overlay";
     scene.add(overlayMesh);
+    overlayMesh.rotation.set(point.x, point.y, 0);
 
     camera.position.z = 45;
     camera.lookAt(scene.position);
@@ -144,8 +148,7 @@ class Earth extends Component {
 
   lonLatToVector3(lng, lat, out) {
     out = out || new THREE.Vector3();
-    const adjust = 90 - lat;
-    out.set(lng / 90 * Math.PI / 2, adjust / 90 * Math.PI / 2, 0);
+    out.set(lng / 90 * Math.PI / 2, lat / 90 * Math.PI / 2, 0);
     return out;
   }
 

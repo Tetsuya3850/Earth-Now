@@ -8,13 +8,6 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <li>
-          <Link to="/today">Today</Link>
-        </li>
-        <li>
-          <Link to="/earth">Earth</Link>
-        </li>
-
         <Switch>
           <Route path="/today" component={TodayEarthquake} />
           <Route path="/earth" component={Earth} />

@@ -42,7 +42,6 @@ async function monthlyTimeLocationSearch(cb) {
         eObj[key] = [feature.geometry.coordinates];
       }
     });
-    console.log(eObj);
     cb(eObj);
   } catch (err) {
     console.log(err);
