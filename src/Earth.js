@@ -128,13 +128,14 @@ class Earth extends Component {
 
         context.beginPath();
         context.arc(x2, y2, 3 * size, 0, 2 * Math.PI, false);
-        context.fillStyle = "yellow";
+        if (size >= 6.0) {
+          context.fillStyle = "red";
+        } else if (size >= 4.5) {
+          context.fillStyle = "orange";
+        } else {
+          context.fillStyle = "yellow";
+        }
         context.fill();
-
-        context.fill();
-        context.lineWidth = 2;
-        context.strokeStyle = "yellow";
-        context.stroke();
       });
     }
 
