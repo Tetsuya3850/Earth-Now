@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import THREELib from "three-js";
-import _ from "lodash";
 import Client from "./client";
-import earth from "./earthmap4k.jpg";
+import earth from "./blueMarble.jpg";
 
 const THREE = THREELib(["OrbitControls"]);
 
@@ -30,9 +29,9 @@ class Earth extends Component {
       const keys = Object.keys(data);
       this.setState({
         earthquake: data,
-        startTime: parseInt(keys[0]),
-        endTime: parseInt(keys[keys.length - 1]),
-        timestamp: parseInt(keys[0])
+        startTime: parseInt(keys[0], 10),
+        endTime: parseInt(keys[keys.length - 1], 10),
+        timestamp: parseInt(keys[0], 10)
       });
     });
     this.init();
@@ -46,7 +45,7 @@ class Earth extends Component {
           return { timestamp: prevState.timestamp + 1 };
         });
       }
-    }, 1000);
+    }, 500);
   }
 
   init() {
@@ -138,26 +137,6 @@ class Earth extends Component {
       });
     }
 
-    /*Client.dailyLocationSearch(data => {
-      data.forEach(function(e) {
-        var posX = parseFloat(e[0]);
-        var posY = parseFloat(e[1]);
-
-        var x2 = 4096 / 360.0 * (180 + posX);
-        var y2 = 2048 / 180.0 * (90 - posY);
-
-        context.beginPath();
-        context.arc(x2, y2, 8, 0, 2 * Math.PI, false);
-        context.fillStyle = "yellow";
-        context.fill();
-
-        context.fill();
-        context.lineWidth = 2;
-        context.strokeStyle = "yellow";
-        context.stroke();
-      });
-    });*/
-
     return canvas;
   }
 
@@ -169,7 +148,7 @@ class Earth extends Component {
   }
 
   threeRender = () => {
-    if (Date.now() - timeCount > 400) {
+    if (Date.now() - timeCount > 200) {
       scene.getObjectByName("overlay").material.map = new THREE.Texture(
         this.addCanvas()
       );
