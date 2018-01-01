@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import THREELib from "three-js";
+import _ from "lodash";
 import Client from "./client";
 import earth from "./earthmap4k.jpg";
 
@@ -11,6 +12,7 @@ let scene;
 let camera;
 let cameraControl;
 let loader, canvas;
+let timeCount = Date.now();
 
 class Earth extends Component {
   constructor(props) {
@@ -167,9 +169,12 @@ class Earth extends Component {
   }
 
   threeRender = () => {
-    scene.getObjectByName("overlay").material.map = new THREE.Texture(
-      this.addCanvas()
-    );
+    if (Date.now() - timeCount > 400) {
+      scene.getObjectByName("overlay").material.map = new THREE.Texture(
+        this.addCanvas()
+      );
+      timeCount = Date.now();
+    }
     scene.getObjectByName("overlay").material.map.needsUpdate = true;
     cameraControl.update();
     renderer.render(scene, camera);
