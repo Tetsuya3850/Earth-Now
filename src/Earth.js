@@ -15,14 +15,36 @@ let loader, canvas;
 class Earth extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      loading: true
+      earthquake: [],
+      startTime: Date.now(),
+      endTime: Date.now(),
+      timestamp: Date.now()
     };
   }
 
   componentDidMount() {
+    Client.monthlyTimeLocationSearch(data => {
+      const keys = Object.keys(data);
+      this.setState({
+        earthquake: data,
+        startTime: parseInt(keys[0]),
+        endTime: parseInt(keys[keys.length - 1]),
+        timestamp: parseInt(keys[0])
+      });
+    });
     this.init();
+    setInterval(() => {
+      if (this.state.timestamp === this.state.endTime) {
+        this.setState({
+          timestamp: this.state.startTime
+        });
+      } else {
+        this.setState(prevState => {
+          return { timestamp: prevState.timestamp + 1 };
+        });
+      }
+    }, 1000);
   }
 
   init() {
@@ -93,6 +115,12 @@ class Earth extends Component {
     canvas.height = 2048;
 
     var context = canvas.getContext("2d");
+
+    console.log(this.state.earthquake);
+
+    this.state.earthquake.map(data => {
+      console.log(data);
+    });
 
     Client.dailyLocationSearch(data => {
       data.forEach(function(e) {

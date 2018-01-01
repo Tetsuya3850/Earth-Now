@@ -14,7 +14,7 @@ async function dailySearch(cb) {
 async function dailyLocationSearch(cb) {
   try {
     const response = await fetch(
-      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson`
+      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson`
     );
     const json = await response.json();
     const earthquakes = json.features.map(
@@ -26,5 +26,30 @@ async function dailyLocationSearch(cb) {
   }
 }
 
-const Client = { dailySearch, dailyLocationSearch };
+async function monthlyTimeLocationSearch(cb) {
+  try {
+    const response = await fetch(
+      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson`
+    );
+    const json = await response.json();
+    const eObj = {};
+    json.features.forEach(feature => {
+      const key = round_helper(feature.properties.time);
+      if (key in eObj) {
+        eObj[key].push(feature.geometry.coordinates);
+      } else {
+        eObj[key] = [feature.geometry.coordinates];
+      }
+    });
+    cb(eObj);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+function round_helper(num) {
+  return Math.round(num / 100000000);
+}
+
+const Client = { dailySearch, dailyLocationSearch, monthlyTimeLocationSearch };
 export default Client;
