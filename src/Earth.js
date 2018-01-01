@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import THREELib from "three-js";
-import Client from "./api";
-import earth from "./blueMarble.jpg";
-import { timeConverter } from "./helper";
+import Client from "./helpers/api";
+import earth from "./assets/blueMarble.jpg";
+import { timeConverter } from "./helpers/utils";
 
 const THREE = THREELib(["OrbitControls"]);
 
@@ -198,7 +198,7 @@ class Earth extends Component {
             color: "white"
           }}
         >
-          <p>"Magnitude 2.5+ Earthquakes, Past Month"</p>
+          <p>Magnitude 2.5+ Earthquakes, Past Month</p>
           <p>{standardTime}</p>
         </div>
       </div>
