@@ -35,12 +35,14 @@ async function monthlyTimeLocationSearch(cb) {
     const eObj = {};
     json.features.forEach(feature => {
       const key = round_helper(feature.properties.time);
+      feature.geometry.coordinates[2] = feature.properties.mag;
       if (key in eObj) {
         eObj[key].push(feature.geometry.coordinates);
       } else {
         eObj[key] = [feature.geometry.coordinates];
       }
     });
+    console.log(eObj);
     cb(eObj);
   } catch (err) {
     console.log(err);

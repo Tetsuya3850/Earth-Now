@@ -119,14 +119,15 @@ class Earth extends Component {
 
     if (Object.keys(this.state.earthquake).length !== 0) {
       this.state.earthquake[this.state.timestamp].forEach(e => {
-        var posX = parseFloat(e[0]);
-        var posY = parseFloat(e[1]);
+        const posX = parseFloat(e[0]);
+        const posY = parseFloat(e[1]);
+        const size = parseFloat(e[2]);
 
-        var x2 = 4096 / 360.0 * (180 + posX);
-        var y2 = 2048 / 180.0 * (90 - posY);
+        const x2 = 4096 / 360.0 * (180 + posX);
+        const y2 = 2048 / 180.0 * (90 - posY);
 
         context.beginPath();
-        context.arc(x2, y2, 8, 0, 2 * Math.PI, false);
+        context.arc(x2, y2, 3 * size, 0, 2 * Math.PI, false);
         context.fillStyle = "yellow";
         context.fill();
 
