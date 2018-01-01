@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import THREELib from "three-js";
 import Client from "./client";
 import earth from "./blueMarble.jpg";
+import { timeConverter } from "./helper";
 
 const THREE = THREELib(["OrbitControls"]);
 
@@ -18,31 +19,41 @@ class Earth extends Component {
     super(props);
     this.state = {
       earthquake: {},
-      startTime: Date.now(),
-      endTime: Date.now(),
-      timestamp: Date.now()
+      startStamp: Date.now(),
+      endStamp: Date.now(),
+      timestamp: Date.now(),
+      startTime: 0,
+      time: 0
     };
   }
 
   componentDidMount() {
-    Client.monthlyTimeLocationSearch(data => {
+    Client.monthlyTimeLocationSearch((data, startTime) => {
       const keys = Object.keys(data);
       this.setState({
         earthquake: data,
-        startTime: parseInt(keys[0], 10),
-        endTime: parseInt(keys[keys.length - 1], 10),
-        timestamp: parseInt(keys[0], 10)
+        startStamp: parseInt(keys[0], 10),
+        endStamp: parseInt(keys[keys.length - 1], 10),
+        timestamp: parseInt(keys[0], 10),
+        startTime,
+        time: startTime
       });
     });
+
     this.init();
+
     setInterval(() => {
-      if (this.state.timestamp === this.state.endTime) {
+      if (this.state.timestamp === this.state.endStamp) {
         this.setState({
-          timestamp: this.state.startTime
+          timestamp: this.state.startStamp,
+          time: this.state.startTime
         });
       } else {
         this.setState(prevState => {
-          return { timestamp: prevState.timestamp + 1 };
+          return {
+            timestamp: prevState.timestamp + 1,
+            time: prevState.time + 100000000
+          };
         });
       }
     }, 500);
@@ -146,8 +157,8 @@ class Earth extends Component {
     return canvas;
   }
 
-  lonLatToVector3(lng, lat, out) {
-    out = out || new THREE.Vector3();
+  lonLatToVector3(lng, lat) {
+    const out = new THREE.Vector3();
     out.set(lng / 90 * Math.PI / 2, lat / 90 * Math.PI / 2, 0);
     return out;
   }
@@ -172,9 +183,24 @@ class Earth extends Component {
   }
 
   render() {
+    const standardTime = timeConverter(this.state.time);
     return (
       <div>
         <div id="earthCanvas" />
+        <div
+          style={{
+            position: "absolute",
+            top: 80,
+            left: 40,
+            width: 350,
+            zIndex: 100,
+            display: "block",
+            color: "white"
+          }}
+        >
+          <p>"Magnitude 2.5+ Earthquakes, Past Month"</p>
+          <p>{standardTime}</p>
+        </div>
       </div>
     );
   }

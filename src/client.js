@@ -42,7 +42,8 @@ async function monthlyTimeLocationSearch(cb) {
         eObj[key] = [feature.geometry.coordinates];
       }
     });
-    cb(eObj);
+    const startTime = json.features[json.features.length - 1].properties.time;
+    cb(eObj, startTime);
   } catch (err) {
     console.log(err);
   }
