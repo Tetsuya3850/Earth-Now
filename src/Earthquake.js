@@ -14,7 +14,7 @@ let cameraControl;
 let loader, canvas;
 let timeCount = Date.now();
 
-class Earth extends Component {
+class Earthquake extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -206,4 +206,4 @@ class Earth extends Component {
   }
 }
 
-export default Earth;
+export default Earthquake;
