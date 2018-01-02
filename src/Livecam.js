@@ -2,17 +2,28 @@ import React, { Component } from "react";
 import Client from "./helpers/api";
 
 class Livecam extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      livecam: []
+    };
+  }
+
   componentDidMount() {
-    Client.liveCamSearch();
+    Client.liveCamSearch(data => {
+      this.setState({ livecam: data });
+    });
   }
 
   render() {
-    return (
-      <div>
-        <img src={"https://images.webcams.travel/preview/1171032474.jpg"} />
-        livecam
-      </div>
-    );
+    const webcamImages = this.state.livecam.map(id => (
+      <img
+        src={`https://images.webcams.travel/thumbnail/${id}.jpg`}
+        key={id}
+        alt={"livecam"}
+      />
+    ));
+    return <div>{webcamImages}</div>;
   }
 }
 

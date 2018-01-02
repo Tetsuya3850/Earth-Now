@@ -35,7 +35,7 @@ async function liveCamSearch(cb) {
     );
     const json = await response.json();
     const ids = json.result.webcams.map(cam => cam.id);
-    console.log(ids);
+    cb(ids);
   } catch (err) {
     console.log(err);
   }
