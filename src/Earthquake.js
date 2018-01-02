@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import THREELib from "three-js";
 import Client from "./helpers/api";
-import earth from "./assets/blueMarble.jpg";
+import earth from "./assets/earth.png";
+import legend from "./assets/earthquake_legend.png";
 import { timeConverter } from "./helpers/utils";
 
 const THREE = THREELib(["OrbitControls"]);
@@ -127,8 +128,8 @@ class Earthquake extends Component {
 
   addCanvas() {
     canvas = document.createElement("canvas");
-    canvas.width = 4096;
-    canvas.height = 2048;
+    canvas.width = 1024;
+    canvas.height = 512;
 
     var context = canvas.getContext("2d");
 
@@ -138,14 +139,14 @@ class Earthquake extends Component {
         const posY = parseFloat(e[1]);
         const size = parseFloat(e[2]);
 
-        const x2 = 4096 / 360.0 * (180 + posX);
-        const y2 = 2048 / 180.0 * (90 - posY);
+        const x2 = 1024 / 360.0 * (180 + posX);
+        const y2 = 512 / 180.0 * (90 - posY);
 
         context.beginPath();
-        context.arc(x2, y2, 3 * size, 0, 2 * Math.PI, false);
-        if (size >= 6.0) {
+        context.arc(x2, y2, 1 * size, 0, 2 * Math.PI, false);
+        if (size > 6.0) {
           context.fillStyle = "red";
-        } else if (size >= 4.5) {
+        } else if (size > 4.5) {
           context.fillStyle = "orange";
         } else {
           context.fillStyle = "yellow";
@@ -200,6 +201,7 @@ class Earthquake extends Component {
         >
           <p>Magnitude 2.5+ Earthquakes, Past Month</p>
           <p>{standardTime}</p>
+          <img src={legend} alt="earthquake_legend" width="300" />
         </div>
       </div>
     );
