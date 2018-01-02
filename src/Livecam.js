@@ -23,7 +23,16 @@ class Livecam extends Component {
         alt={"livecam"}
       />
     ));
-    return <div>{webcamImages}</div>;
+    return (
+      <div>
+        {webcamImages}
+        <img
+          src={
+            "https://www.fourmilab.ch/cgi-bin/Earth?img=NASAmMM-l.evif&imgsize=600&dynimg=y&opt=-l&lat=90&ns=North&lon=0&ew=East&alt=35785&tle=&date=0&utc=&jd="
+          }
+        />
+      </div>
+    );
   }
 }
 
