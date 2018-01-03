@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import earth from "./assets/earth.png";
-import { livecamData, clock } from "./helpers/livecamdata";
+import { livecamData } from "./helpers/livecamdata";
 
 class Livecam extends Component {
   constructor(props) {
@@ -10,49 +9,52 @@ class Livecam extends Component {
     };
   }
 
-  componentDidMount() {
-    this.addCanvas();
-  }
-
-  addCanvas() {
-    const layer1 = document.getElementById("layer1");
-    const ctx1 = layer1.getContext("2d");
-
-    /*const img = new Image();
-    img.src =
-      "https://www.fourmilab.ch/cgi-bin/Earth?img=NASAmMM-l.evif&imgsize=550&dynimg=y&opt=-l&lat=90&ns=North&lon=0&ew=East&alt=35785&tle=&date=0&utc=&jd=";
-    img.onload = function(e) {
-      ctx1.drawImage(img, 400, 80);
-    };
-    */
-
-    const layer2 = document.getElementById("layer2");
-    const ctx2 = layer2.getContext("2d");
-
-    this.state.livecam.forEach(data => {
-      const cam_img = new Image();
-      cam_img.src = `https://images.webcams.travel/thumbnail/${data.id}.jpg`;
-      cam_img.onload = function(e) {
-        ctx2.drawImage(cam_img, data.pos[0], data.pos[1], 80, 45);
-      };
-    });
-  }
-
   render() {
+    const livecams = this.state.livecam.map(data => (
+      <a target="_blank" href={data.url} key={data.id}>
+        <img
+          style={{
+            left: data.pos[0],
+            top: data.pos[1],
+            width: 80,
+            height: 45,
+            position: "absolute",
+            zIndex: 100
+          }}
+          src={`https://images.webcams.travel/thumbnail/${data.id}.jpg`}
+          key={data.id}
+          alt={"livecam"}
+        />
+      </a>
+    ));
     return (
       <div>
-        <canvas
-          id="layer1"
-          width="1200"
-          height="800"
-          style={{ zIndex: 0, left: 0, top: 0, position: "absolute" }}
+        <div
+          style={{
+            position: "absolute",
+            top: 80,
+            left: 80,
+            width: 250,
+            zIndex: 100,
+            display: "block",
+            color: "white"
+          }}
+        >
+          <h2>Earth Clock</h2>
+        </div>
+        <img
+          style={{
+            left: 400,
+            top: 80,
+            position: "absolute",
+            zIndex: 0
+          }}
+          src={
+            "https://www.fourmilab.ch/cgi-bin/Earth?img=NASAmMM-l.evif&imgsize=550&dynimg=y&opt=-l&lat=90&ns=North&lon=0&ew=East&alt=35785&tle=&date=0&utc=&jd="
+          }
+          alt={"earth"}
         />
-        <canvas
-          id="layer2"
-          width="1200"
-          height="800"
-          style={{ zIndex: 100, left: 0, top: 0, position: "absolute" }}
-        />
+        {livecams}
       </div>
     );
   }
