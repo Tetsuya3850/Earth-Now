@@ -118,7 +118,7 @@ class Radio extends Component {
         const y2 = 512 / 180.0 * (90 - posY);
 
         context.beginPath();
-        context.arc(x2, y2, 8, 0, 2 * Math.PI, false);
+        context.arc(x2, y2, 2, 0, 2 * Math.PI, false);
         context.fillStyle = "yellow";
         context.fill();
       });
@@ -161,7 +161,10 @@ class Radio extends Component {
     var intersects = raycaster.intersectObjects(targetList);
 
     if (intersects.length > 0) {
-      console.log(intersects[0]);
+      const uv = intersects[0].uv;
+      const lon = 180 * uv.y - 90;
+      const lat = 360 * uv.x - 180;
+      console.log(lon, lat);
     }
   }
 

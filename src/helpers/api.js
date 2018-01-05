@@ -44,7 +44,7 @@ async function liveCamSearch(cb) {
 async function radioSearch(cb) {
   try {
     const response = await fetch(
-      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.geojson`
+      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson`
     );
     const json = await response.json();
     const equake = json.features.map(feature => feature.geometry.coordinates);
