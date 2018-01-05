@@ -14,8 +14,11 @@ let camera;
 let cameraControl;
 let loader, canvas;
 let timeCount = Date.now();
+var raycaster;
+var mouse;
+var targetList = [];
 
-class Earthquake extends Component {
+class Radio extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,22 +45,6 @@ class Earthquake extends Component {
     });
 
     this.init();
-
-    setInterval(() => {
-      if (this.state.timestamp === this.state.endStamp) {
-        this.setState({
-          timestamp: this.state.startStamp,
-          time: this.state.startTime
-        });
-      } else {
-        this.setState(prevState => {
-          return {
-            timestamp: prevState.timestamp + 1,
-            time: prevState.time + 100000000
-          };
-        });
-      }
-    }, 500);
   }
 
   init() {
@@ -90,6 +77,7 @@ class Earthquake extends Component {
     overlayMesh.name = "overlay";
     scene.add(overlayMesh);
     overlayMesh.rotation.set(point.x, point.y, 0);
+    targetList.push(overlayMesh);
 
     camera.position.z = 45;
     camera.lookAt(scene.position);
@@ -101,9 +89,13 @@ class Earthquake extends Component {
     earthCanvas = document.getElementById("earthCanvas");
     earthCanvas.appendChild(renderer.domElement);
 
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+
     this.threeRender();
 
     window.addEventListener("resize", this.handleResize, false);
+    window.addEventListener("mousedown", this.onMouseDown, false);
   }
 
   createEarthMaterial() {
@@ -153,13 +145,12 @@ class Earthquake extends Component {
         context.fill();
       });
     }
-
     return canvas;
   }
 
   lonLatToVector3(lng, lat) {
     const out = new THREE.Vector3();
-    out.set(lng / 90 * Math.PI / 2, (lat - 180) / 90 * Math.PI / 2, 0);
+    out.set(lng / 90 * Math.PI / 2, lat / 90 * Math.PI / 2, 0);
     return out;
   }
 
@@ -171,6 +162,7 @@ class Earthquake extends Component {
       timeCount = Date.now();
     }
     scene.getObjectByName("overlay").material.map.needsUpdate = true;
+
     cameraControl.update();
     renderer.render(scene, camera);
     requestAnimationFrame(this.threeRender);
@@ -180,6 +172,19 @@ class Earthquake extends Component {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  onMouseDown(event) {
+    mouse.x = event.clientX / window.innerWidth * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    var intersects = raycaster.intersectObjects(targetList);
+
+    if (intersects.length > 0) {
+      console.log(intersects[0]);
+    }
   }
 
   render() {
@@ -207,4 +212,4 @@ class Earthquake extends Component {
   }
 }
 
-export default Earthquake;
+export default Radio;
