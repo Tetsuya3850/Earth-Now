@@ -41,5 +41,18 @@ async function liveCamSearch(cb) {
   }
 }
 
-const Client = { monthlyTimeLocationSearch, liveCamSearch };
+async function radioSearch(cb) {
+  try {
+    const response = await fetch(
+      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.geojson`
+    );
+    const json = await response.json();
+    const equake = json.features.map(feature => feature.geometry.coordinates);
+    cb(equake);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const Client = { monthlyTimeLocationSearch, liveCamSearch, radioSearch };
 export default Client;

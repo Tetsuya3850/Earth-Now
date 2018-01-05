@@ -22,25 +22,14 @@ class Radio extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      earthquake: {},
-      startStamp: Date.now(),
-      endStamp: Date.now(),
-      timestamp: Date.now(),
-      startTime: 0,
-      time: 0
+      earthquake: []
     };
   }
 
   componentDidMount() {
-    Client.monthlyTimeLocationSearch((data, startTime) => {
-      const keys = Object.keys(data);
+    Client.radioSearch(data => {
       this.setState({
-        earthquake: data,
-        startStamp: parseInt(keys[0], 10),
-        endStamp: parseInt(keys[keys.length - 1], 10),
-        timestamp: parseInt(keys[0], 10),
-        startTime,
-        time: startTime
+        earthquake: data
       });
     });
 
@@ -62,21 +51,17 @@ class Radio extends Component {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.Enabled = true;
 
-    let point = this.lonLatToVector3(38, 135);
-
     var earthGeometry = new THREE.SphereGeometry(15, 60, 60);
     var earthMaterial = this.createEarthMaterial();
     var earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
     earthMesh.name = "earth";
     scene.add(earthMesh);
-    earthMesh.rotation.set(point.x, point.y, 0);
 
     var overlayGeometry = new THREE.SphereGeometry(15, 60, 60);
     var overlayMaterial = this.createOverlayMaterial();
     var overlayMesh = new THREE.Mesh(overlayGeometry, overlayMaterial);
     overlayMesh.name = "overlay";
     scene.add(overlayMesh);
-    overlayMesh.rotation.set(point.x, point.y, 0);
     targetList.push(overlayMesh);
 
     camera.position.z = 45;
@@ -125,23 +110,16 @@ class Radio extends Component {
     var context = canvas.getContext("2d");
 
     if (Object.keys(this.state.earthquake).length !== 0) {
-      this.state.earthquake[this.state.timestamp].forEach(e => {
+      this.state.earthquake.forEach(e => {
         const posX = parseFloat(e[0]);
         const posY = parseFloat(e[1]);
-        const size = parseFloat(e[2]);
 
         const x2 = 1024 / 360.0 * (180 + posX);
         const y2 = 512 / 180.0 * (90 - posY);
 
         context.beginPath();
-        context.arc(x2, y2, 1 * size, 0, 2 * Math.PI, false);
-        if (size > 6.0) {
-          context.fillStyle = "red";
-        } else if (size > 4.5) {
-          context.fillStyle = "orange";
-        } else {
-          context.fillStyle = "yellow";
-        }
+        context.arc(x2, y2, 8, 0, 2 * Math.PI, false);
+        context.fillStyle = "yellow";
         context.fill();
       });
     }
@@ -202,11 +180,7 @@ class Radio extends Component {
             display: "block",
             color: "white"
           }}
-        >
-          <p>Magnitude 2.5+ Earthquakes, Past Month</p>
-          <p>{standardTime}</p>
-          <img src={legend} alt="earthquake_legend" width="300" />
-        </div>
+        />
       </div>
     );
   }
