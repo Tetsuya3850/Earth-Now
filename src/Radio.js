@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import THREELib from "three-js";
 import Client from "./helpers/api";
 import earth from "./assets/earth.png";
-import legend from "./assets/earthquake_legend.png";
-import { timeConverter } from "./helpers/utils";
 
 const THREE = THREELib(["OrbitControls"]);
 
@@ -13,10 +11,10 @@ let scene;
 let camera;
 let cameraControl;
 let loader, canvas;
+let raycaster;
+let mouse;
+let targetList = [];
 let timeCount = Date.now();
-var raycaster;
-var mouse;
-var targetList = [];
 
 class Radio extends Component {
   constructor(props) {
@@ -51,9 +49,9 @@ class Radio extends Component {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.Enabled = true;
 
-    var earthGeometry = new THREE.SphereGeometry(15, 60, 60);
-    var earthMaterial = this.createEarthMaterial();
-    var earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+    const earthGeometry = new THREE.SphereGeometry(15, 60, 60);
+    const earthMaterial = this.createEarthMaterial();
+    const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
     earthMesh.name = "earth";
     scene.add(earthMesh);
 
@@ -118,7 +116,7 @@ class Radio extends Component {
         const y2 = 512 / 180.0 * (90 - posY);
 
         context.beginPath();
-        context.arc(x2, y2, 2, 0, 2 * Math.PI, false);
+        context.arc(x2, y2, 4, 0, 2 * Math.PI, false);
         context.fillStyle = "yellow";
         context.fill();
       });
@@ -169,7 +167,6 @@ class Radio extends Component {
   }
 
   render() {
-    const standardTime = timeConverter(this.state.time);
     return (
       <div>
         <div id="earthCanvas" />
